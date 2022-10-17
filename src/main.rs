@@ -1,16 +1,9 @@
-pub mod api;
 pub mod cli;
-pub mod config;
+pub mod routers;
 
-#[macro_use]
-extern crate getset;
-
-use axum::{routing::get, Router};
 use clap::Parser;
 use cli::cli::Cli;
-use config::config::AppConfig;
 use state::Container;
-use tokio::fs::read_to_string;
 
 pub static APP_CONTENT: Container![Send + Sync] = <Container![Send + Sync]>::new();
 
@@ -23,17 +16,15 @@ async fn main() {
 }
 
 async fn start_webservice() {
-    // build our application with a single route
-    let app = Router::new().route("/", get(api::public::hello_world));
+    // Build routers
+    let app = routers::api::routers();
 
     // Load config
-    let config_data = read_to_string("application.yaml").await.unwrap();
-    let config = AppConfig::new(config_data.as_str());
+    let config = hwspanel_for_rust::load_config().await;
 
     // Save config
     APP_CONTENT.set(config.clone());
 
-    // run it with hyper on localhost:3000
     let address = format!("{}:{}", config.server().host(), config.server().port());
     axum::Server::bind(&address.parse().unwrap())
         .serve(app.into_make_service())
