@@ -8,6 +8,7 @@ pub struct ServerConfig {
 #[derive(serde::Serialize, serde::Deserialize, Getters, Setters, PartialEq, Debug, Clone)]
 #[getset(get_mut = "pub", get = "pub", set = "pub")]
 pub struct AppConfig {
+    debug: bool,
     server: ServerConfig,
 }
 
