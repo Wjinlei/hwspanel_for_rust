@@ -186,6 +186,7 @@ name = "hwspanel_for_rust"
 version = "1.0.0"
 dependencies = [
  "axum",
+ "serde_json",
  "tokio",
 ]
 
