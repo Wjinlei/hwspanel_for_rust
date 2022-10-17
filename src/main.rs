@@ -1,18 +1,28 @@
-use axum::{routing::get, Router};
-use config::config::AppConfig;
-use state::Container;
-use tokio::fs::read_to_string;
-
 pub mod api;
+pub mod cli;
 pub mod config;
 
 #[macro_use]
 extern crate getset;
 
+use axum::{routing::get, Router};
+use clap::Parser;
+use cli::cli::Cli;
+use config::config::AppConfig;
+use state::Container;
+use tokio::fs::read_to_string;
+
 pub static APP_CONTENT: Container![Send + Sync] = <Container![Send + Sync]>::new();
 
 #[tokio::main]
 async fn main() {
+    let cli = Cli::parse();
+    if cli.start {
+        start_webservice().await;
+    }
+}
+
+async fn start_webservice() {
     // build our application with a single route
     let app = Router::new().route("/", get(api::public::hello_world));
 
