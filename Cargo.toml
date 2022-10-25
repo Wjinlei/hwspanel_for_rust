@@ -14,3 +14,8 @@ serde_yaml = "0.9.13"
 getset = "0.1.2"
 state = { version = "0.5.3", features = ["tls"] }
 clap = { version = "4.0.15", features = ["derive"] }
+log = "0.4.17"
+fast_log = "1.5.40"
+rbs = { version = "0.1.11"}
+rbatis = { version = "4.0.39"}
+rbdc-sqlite = { version = "0.1.14" }
