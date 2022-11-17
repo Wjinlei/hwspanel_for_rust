@@ -1,15 +1,15 @@
-pub mod cli;
-pub mod routers;
-
 use clap::Parser;
-use cli::cli::Cli;
 use state::Container;
+
+use hwspanel_for_rust::api;
+use hwspanel_for_rust::infrastructure::cli;
+use hwspanel_for_rust::infrastructure::config;
 
 pub static APP_CONTENT: Container![Send + Sync] = <Container![Send + Sync]>::new();
 
 #[tokio::main]
 async fn main() {
-    let cli = Cli::parse();
+    let cli = cli::Cli::parse();
     if cli.start {
         start_webservice().await;
     }
@@ -17,10 +17,10 @@ async fn main() {
 
 async fn start_webservice() {
     // Build routers
-    let app = routers::api::routers();
+    let app = api::routers::routers();
 
     // Load config
-    let config = hwspanel_for_rust::load_config().await;
+    let config = config::load_config().await;
 
     // Save config
     APP_CONTENT.set(config.clone());
