@@ -19,3 +19,4 @@ fast_log = "1.5.40"
 rbs = { version = "0.1.11"}
 rbatis = { version = "4.0.39"}
 rbdc-sqlite = { version = "0.1.14" }
+sysinfo = "0.26"
