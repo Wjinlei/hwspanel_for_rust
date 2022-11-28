@@ -1,7 +1,7 @@
 use std::{path::PathBuf, str::from_utf8};
 
 use serde::{Deserialize, Serialize};
-use sysinfo::{DiskExt, System, SystemExt};
+use sysinfo::{DiskExt, RefreshKind, System, SystemExt};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct DiskDTO {
@@ -23,9 +23,8 @@ pub struct DiskDTO {
 /// }
 /// ```
 pub fn get_disks() -> Vec<DiskDTO> {
-    let mut sys = System::new_all();
-    sys.refresh_disks();
-    sys.disks()
+    System::new_with_specifics(RefreshKind::new().with_disks_list())
+        .disks()
         .into_iter()
         .map(|disk| DiskDTO {
             name: match disk.name().to_str() {
