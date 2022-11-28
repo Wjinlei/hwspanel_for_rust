@@ -1,7 +1,6 @@
-use std::{path::PathBuf, str::from_utf8};
-
 use serde::{Deserialize, Serialize};
-use sysinfo::{DiskExt, RefreshKind, System, SystemExt};
+use std::{path::PathBuf, str::from_utf8};
+use sysinfo::{DiskExt, NetworkExt, SystemExt};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct DiskDTO {
@@ -13,18 +12,24 @@ pub struct DiskDTO {
     pub is_removable: bool,   // false
 }
 
+#[derive(Serialize, Deserialize, Debug)]
+pub struct NetworkDTO {
+    pub name: String, // "enp2s0"
+    pub received: u64,
+    pub total_received: u64,
+    pub transmitted: u64,
+    pub total_transmitted: u64,
+    pub packets_received: u64,
+    pub total_packets_received: u64,
+    pub packets_transmitted: u64,
+    pub total_packets_transmitted: u64,
+}
+
 /// Get Disk Information
-///
-/// # Examples
-///
-/// ```
-/// for disk in get_disks {
-///     println!("{:?}", disk);
-/// }
-/// ```
 pub fn get_disks() -> Vec<DiskDTO> {
-    System::new_with_specifics(RefreshKind::new().with_disks_list())
-        .disks()
+    let mut sys = super::SYS_INFO.get().write().unwrap();
+    sys.refresh_disks_list();
+    sys.disks()
         .into_iter()
         .map(|disk| DiskDTO {
             name: match disk.name().to_str() {
@@ -39,6 +44,26 @@ pub fn get_disks() -> Vec<DiskDTO> {
             total_space: disk.total_space(),
             available_space: disk.available_space(),
             is_removable: disk.is_removable(),
+        })
+        .collect()
+}
+
+/// Get Network Information
+pub fn get_networks() -> Vec<NetworkDTO> {
+    let mut sys = super::SYS_INFO.get().write().unwrap();
+    sys.refresh_networks_list();
+    sys.networks()
+        .into_iter()
+        .map(|network| NetworkDTO {
+            name: network.0.to_string(),
+            received: network.1.received(),
+            total_received: network.1.total_received(),
+            transmitted: network.1.transmitted(),
+            total_transmitted: network.1.total_transmitted(),
+            packets_received: network.1.packets_received(),
+            total_packets_received: network.1.total_packets_received(),
+            packets_transmitted: network.1.packets_transmitted(),
+            total_packets_transmitted: network.1.total_packets_transmitted(),
         })
         .collect()
 }
