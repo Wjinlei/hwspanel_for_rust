@@ -59,8 +59,12 @@ pub struct LoadAvgDTO {
 pub struct MemoryDTO {
     pub total_memory: u64,
     pub used_memory: u64,
+    pub free_memory: u64,
+    pub percent_memory: u64,
     pub total_swap: u64,
     pub used_swap: u64,
+    pub free_swap: u64,
+    pub percent_swap: u64,
 }
 
 /// Get Disk Information
@@ -148,7 +152,11 @@ pub fn get_memory() -> MemoryDTO {
     MemoryDTO {
         total_memory: sys.total_memory(),
         used_memory: sys.used_memory(),
+        free_memory: sys.free_memory(),
+        percent_memory: ((sys.used_memory() as f64 / sys.total_memory() as f64) * 100f64) as u64,
         total_swap: sys.total_swap(),
         used_swap: sys.used_swap(),
+        free_swap: sys.free_swap(),
+        percent_swap: ((sys.used_swap() as f64 / sys.total_swap() as f64) * 100f64) as u64,
     }
 }
