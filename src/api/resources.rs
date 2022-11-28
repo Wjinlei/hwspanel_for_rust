@@ -7,8 +7,9 @@ pub async fn api_get_resources() -> Json<Value> {
     Json(json!({
         "code": 200,
         "data": {
-            "disks": appliaction::resources::get_disks(),
             "networks": appliaction::resources::get_networks(),
+            "disks": appliaction::resources::get_disks(),
+            "cpus": appliaction::resources::get_cpus(),
         },
     }))
 }
@@ -19,4 +20,8 @@ pub async fn api_get_networks() -> Json<Value> {
 
 pub async fn api_get_disks() -> Json<Value> {
     Json(json!({ "code": 200, "data": appliaction::resources::get_disks() }))
+}
+
+pub async fn api_get_cpus() -> Json<Value> {
+    Json(json!({ "code": 200, "data": appliaction::resources::get_cpus() }))
 }

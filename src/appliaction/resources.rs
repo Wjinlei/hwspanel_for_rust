@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::{path::PathBuf, str::from_utf8};
-use sysinfo::{DiskExt, NetworkExt, SystemExt};
+use sysinfo::{CpuExt, DiskExt, NetworkExt, SystemExt};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct DiskDTO {
@@ -23,6 +23,15 @@ pub struct NetworkDTO {
     pub total_packets_received: u64,
     pub packets_transmitted: u64,
     pub total_packets_transmitted: u64,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct CPUDTO {
+    pub name: String,
+    pub frequency: u64,
+    pub cpu_usage: f32,
+    pub vendor_id: String,
+    pub brand: String,
 }
 
 /// Get Disk Information
@@ -64,6 +73,21 @@ pub fn get_networks() -> Vec<NetworkDTO> {
             total_packets_received: network.1.total_packets_received(),
             packets_transmitted: network.1.packets_transmitted(),
             total_packets_transmitted: network.1.total_packets_transmitted(),
+        })
+        .collect()
+}
+
+pub fn get_cpus() -> Vec<CPUDTO> {
+    let mut sys = super::SYS_INFO.get().write().unwrap();
+    sys.refresh_cpu();
+    sys.cpus()
+        .into_iter()
+        .map(|cpu| CPUDTO {
+            name: cpu.name().to_string(),
+            frequency: cpu.frequency(),
+            cpu_usage: cpu.cpu_usage(),
+            vendor_id: cpu.vendor_id().to_string(),
+            brand: cpu.brand().to_string(),
         })
         .collect()
 }

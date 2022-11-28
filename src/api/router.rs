@@ -7,7 +7,8 @@ pub fn get_router() -> Router {
         "/api",
         Router::new()
             .route("/GetResources", get(resources::api_get_resources))
+            .route("/GetNetworks", get(resources::api_get_networks))
             .route("/GetDisks", get(resources::api_get_disks))
-            .route("/GetNetworks", get(resources::api_get_networks)),
+            .route("/GetCpus", get(resources::api_get_cpus)),
     )
 }
