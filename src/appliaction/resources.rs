@@ -77,6 +77,7 @@ pub fn get_networks() -> Vec<NetworkDTO> {
         .collect()
 }
 
+/// Get CPU Information
 pub fn get_cpus() -> Vec<CPUDTO> {
     let mut sys = super::SYS_INFO.get().write().unwrap();
     sys.refresh_cpu();
