@@ -122,6 +122,7 @@ pub fn get_cpus() -> Vec<CPUDTO> {
         .collect()
 }
 
+/// Get System Information
 pub fn get_system() -> SystemDTO {
     let sys = super::SYS_INFO.get().write().unwrap();
     let load_avg = sys.load_average();
@@ -140,6 +141,7 @@ pub fn get_system() -> SystemDTO {
     }
 }
 
+/// Get Memory Information
 pub fn get_memory() -> MemoryDTO {
     let mut sys = super::SYS_INFO.get().write().unwrap();
     sys.refresh_memory();
