@@ -5,14 +5,23 @@ use sysinfo::{DiskExt, System, SystemExt};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct DiskDTO {
-    pub name: String,
-    pub file_system: String,
-    pub mount_point: PathBuf,
-    pub total_space: u64,
-    pub available_space: u64,
-    pub is_removable: bool,
+    pub name: String,         // "/dev/sda1"
+    pub file_system: String,  // "vfat"
+    pub mount_point: PathBuf, // "boot"
+    pub total_space: u64,     // 535801856
+    pub available_space: u64, // 426647552
+    pub is_removable: bool,   // false
 }
 
+/// Get Disk Information
+///
+/// # Examples
+///
+/// ```
+/// for disk in get_disks {
+///     println!("{:?}", disk);
+/// }
+/// ```
 pub fn get_disks() -> Vec<DiskDTO> {
     let mut sys = System::new_all();
     sys.refresh_disks();
