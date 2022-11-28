@@ -40,6 +40,19 @@ pub struct SystemDTO {
     pub kernel_version: Option<String>,
     pub os_version: Option<String>,
     pub host_name: Option<String>,
+    pub load_avg: LoadAvgDTO,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct LoadAvgDTO {
+    /// Average load within one minute.
+    pub one: f64,
+    /// Average load within five minutes.
+    pub five: f64,
+    /// Average load within fifteen minutes.
+    pub fifteen: f64,
+    // 计算平均负载 https://www.tecmint.com/understand-linux-load-averages-and-monitor-performance/
+    pub percent: usize,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -111,11 +124,19 @@ pub fn get_cpus() -> Vec<CPUDTO> {
 
 pub fn get_system() -> SystemDTO {
     let sys = super::SYS_INFO.get().write().unwrap();
+    let load_avg = sys.load_average();
     SystemDTO {
         name: sys.name(),
         kernel_version: sys.kernel_version(),
         os_version: sys.os_version(),
         host_name: sys.host_name(),
+        load_avg: LoadAvgDTO {
+            one: load_avg.one,
+            five: load_avg.five,
+            fifteen: load_avg.fifteen,
+            // 计算平均负载 https://www.tecmint.com/understand-linux-load-averages-and-monitor-performance/
+            percent: (load_avg.one * 100f64) as usize / sys.cpus().len(),
+        },
     }
 }
 
