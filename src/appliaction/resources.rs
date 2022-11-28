@@ -34,6 +34,22 @@ pub struct CPUDTO {
     pub brand: String,
 }
 
+#[derive(Serialize, Deserialize, Debug)]
+pub struct SystemDTO {
+    pub name: Option<String>,
+    pub kernel_version: Option<String>,
+    pub os_version: Option<String>,
+    pub host_name: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct MemoryDTO {
+    pub total_memory: u64,
+    pub used_memory: u64,
+    pub total_swap: u64,
+    pub used_swap: u64,
+}
+
 /// Get Disk Information
 pub fn get_disks() -> Vec<DiskDTO> {
     let mut sys = super::SYS_INFO.get().write().unwrap();
@@ -91,4 +107,25 @@ pub fn get_cpus() -> Vec<CPUDTO> {
             brand: cpu.brand().to_string(),
         })
         .collect()
+}
+
+pub fn get_system() -> SystemDTO {
+    let sys = super::SYS_INFO.get().write().unwrap();
+    SystemDTO {
+        name: sys.name(),
+        kernel_version: sys.kernel_version(),
+        os_version: sys.os_version(),
+        host_name: sys.host_name(),
+    }
+}
+
+pub fn get_memory() -> MemoryDTO {
+    let mut sys = super::SYS_INFO.get().write().unwrap();
+    sys.refresh_memory();
+    MemoryDTO {
+        total_memory: sys.total_memory(),
+        used_memory: sys.used_memory(),
+        total_swap: sys.total_swap(),
+        used_swap: sys.used_swap(),
+    }
 }
