@@ -131,17 +131,22 @@ pub fn get_cpus() -> Vec<CPUDTO> {
 pub fn get_system() -> SystemDTO {
     let sys = super::SYS_INFO.get().write().unwrap();
     let load_avg = sys.load_average();
+
+    // 计算平均负载 https://www.tecmint.com/understand-linux-load-averages-and-monitor-performance/
+    let max = sys.cpus().len() * 2; // *2 是为了考虑超线程的情况，当超线程开启后，逻辑 CPU 的个数是核数的两倍
+    let percent = (load_avg.one * 100f64) as usize / max;
+    let percent = if percent > 100 { 100 } else { percent };
+
     SystemDTO {
         name: sys.name(),
         kernel_version: sys.kernel_version(),
         os_version: sys.os_version(),
         host_name: sys.host_name(),
         load_avg: LoadAvgDTO {
+            percent,
             one: load_avg.one,
             five: load_avg.five,
             fifteen: load_avg.fifteen,
-            // 计算平均负载 https://www.tecmint.com/understand-linux-load-averages-and-monitor-performance/
-            percent: (load_avg.one * 100f64) as usize / sys.cpus().len(),
         },
     }
 }
