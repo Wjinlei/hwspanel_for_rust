@@ -1,14 +1,13 @@
+use serde::{Deserialize, Serialize};
 use tokio::fs::read_to_string;
 
-#[derive(serde::Serialize, serde::Deserialize, Getters, Setters, PartialEq, Debug, Clone)]
-#[getset(get_mut = "pub", get = "pub", set = "pub")]
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
 pub struct ServerConfig {
     host: String,
     port: String,
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Getters, Setters, PartialEq, Debug, Clone)]
-#[getset(get_mut = "pub", get = "pub", set = "pub")]
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
 pub struct AppConfig {
     debug: bool,
     server: ServerConfig,
