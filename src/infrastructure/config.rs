@@ -1,13 +1,16 @@
+use getset::{Getters, Setters};
 use serde::{Deserialize, Serialize};
 use tokio::fs::read_to_string;
 
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
+#[derive(Serialize, Deserialize, Getters, Setters, PartialEq, Debug, Clone)]
+#[getset(get = "pub", set = "pub")]
 pub struct ServerConfig {
     host: String,
     port: String,
 }
 
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
+#[derive(Serialize, Deserialize, Getters, Setters, PartialEq, Debug, Clone)]
+#[getset(get = "pub", set = "pub")]
 pub struct AppConfig {
     debug: bool,
     server: ServerConfig,
