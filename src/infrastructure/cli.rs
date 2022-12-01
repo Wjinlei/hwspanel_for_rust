@@ -9,6 +9,6 @@ Written in rust, it has unparalleled performance and security
 making it very easy to build software under Linux", long_about = None)]
 pub struct Cli {
     /// Start web service
-    #[arg(long, default_value_t = true)]
-    pub start: bool,
+    #[arg(long, default_value_t = false)]
+    pub debug: bool,
 }

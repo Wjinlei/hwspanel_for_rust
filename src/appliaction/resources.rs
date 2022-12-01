@@ -32,6 +32,8 @@ pub struct CPUDTO {
     pub cpu_usage: f32,
     pub vendor_id: String,
     pub brand: String,
+    pub logical_core_count: usize,
+    pub physical_core_count: Option<usize>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -40,6 +42,8 @@ pub struct SystemDTO {
     pub kernel_version: Option<String>,
     pub os_version: Option<String>,
     pub host_name: Option<String>,
+    pub uptime: u64,
+    pub distribution_id: String,
     pub load_avg: LoadAvgDTO,
 }
 
@@ -112,19 +116,18 @@ pub fn get_networks() -> Vec<NetworkDTO> {
 }
 
 /// Get CPU Information
-pub fn get_cpus() -> Vec<CPUDTO> {
+pub fn get_cpu() -> CPUDTO {
     let mut sys = super::SYS_INFO.get().write().unwrap();
     sys.refresh_cpu();
-    sys.cpus()
-        .into_iter()
-        .map(|cpu| CPUDTO {
-            name: cpu.name().to_string(),
-            frequency: cpu.frequency(),
-            cpu_usage: cpu.cpu_usage(),
-            vendor_id: cpu.vendor_id().to_string(),
-            brand: cpu.brand().to_string(),
-        })
-        .collect()
+    CPUDTO {
+        name: sys.global_cpu_info().name().to_string(),
+        frequency: sys.global_cpu_info().frequency(),
+        cpu_usage: sys.global_cpu_info().cpu_usage(),
+        vendor_id: sys.global_cpu_info().vendor_id().to_string(),
+        brand: sys.global_cpu_info().brand().to_string(),
+        logical_core_count: sys.cpus().len(),
+        physical_core_count: sys.physical_core_count(),
+    }
 }
 
 /// Get System Information
@@ -142,6 +145,8 @@ pub fn get_system() -> SystemDTO {
         kernel_version: sys.kernel_version(),
         os_version: sys.os_version(),
         host_name: sys.host_name(),
+        uptime: sys.uptime(),
+        distribution_id: sys.distribution_id(),
         load_avg: LoadAvgDTO {
             percent,
             one: load_avg.one,
